@@ -25,3 +25,9 @@ services:
         - ./config/hiera.yaml:/etc/puppet/hiera.yaml
         - ./config/hieradata:/etc/puppet/hieradata
         - ./config/hosts:/etc/hosts
+
+networks:
+    default:
+        driver: bridge
+        driver_opts:
+            com.docker.network.driver.mtu: 1450
