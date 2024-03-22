@@ -28,7 +28,7 @@ service rng-tools start
 apt-get install -y locales
 
 if [ $enable_local_repo == "true" ]; then
-    echo "deb file:///bigtop-home/output/apt bigtop contrib" > /etc/apt/sources.list.d/bigtop-home_output.list
+    echo "deb file:///bigtop-home/output/apt bigtop main" > /etc/apt/sources.list.d/bigtop-home_output.list
     # In BIGTOP-2796 repo installed by puppet has priority 900, here we set higher priority for local repo
     cat > /etc/apt/preferences.d/bigtop-home_output.pref << EOF
 Explanation: apt: bigtop-home_output. set local repo to higher priority.
