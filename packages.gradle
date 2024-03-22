@@ -163,7 +163,7 @@ Suite: stable
 Codename: bigtop
 Version: ${config.bigtop.version}
 Architectures: amd64 ppc64el arm64 source
-Components: contrib
+Components: main
 Description: Bigtop
 """;
 }
