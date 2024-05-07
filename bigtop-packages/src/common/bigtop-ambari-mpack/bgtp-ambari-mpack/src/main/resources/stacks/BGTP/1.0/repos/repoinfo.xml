@@ -18,9 +18,16 @@
 <reposinfo>
   <os family="redhat7">
     <repo>
-      <baseurl>http://repos.bigtop.apache.org/releases/3.2.1/centos/7/$basearch</baseurl>
+      <baseurl>https://repos.bigtop.apache.org/releases/3.2.1/centos/7/$basearch</baseurl>
       <repoid>BGTP-1.0</repoid>
       <reponame>BGTP</reponame>
+    </repo>
+  </os>
+  <os family="ubuntu22">
+    <repo>
+      <baseurl>https://nexus-rm.scalhive.com/repository/bigtop-jammy/</baseurl>
+      <repoid>BGTP-1.0</repoid>
+      <reponame>bigtop-jammy</reponame>
     </repo>
   </os>
 </reposinfo>
