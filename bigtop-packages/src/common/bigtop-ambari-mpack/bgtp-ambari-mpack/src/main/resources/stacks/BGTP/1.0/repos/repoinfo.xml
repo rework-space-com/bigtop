@@ -27,7 +27,7 @@
     <repo>
       <baseurl>https://nexus-rm.rework-space.com/repository/bigtop-jammy/</baseurl>
       <repoid>BGTP-1.0</repoid>
-      <reponame>bigtop-jammy</reponame>
+      <reponame>jammy</reponame>
     </repo>
   </os>
 </reposinfo>
