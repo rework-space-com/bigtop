@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -70,7 +70,7 @@ if not is_ams_distributed and len(ams_collector_list) > 1:
 set_instanceId = "false"
 cluster_name = config["clusterName"]
 if 'cluster-env' in config['configurations'] and \
-    'metrics_collector_external_hosts' in config['configurations']['cluster-env']:
+        'metrics_collector_external_hosts' in config['configurations']['cluster-env']:
   ams_collector_hosts = config['configurations']['cluster-env']['metrics_collector_external_hosts']
   set_instanceId = "true"
 else:
@@ -79,7 +79,7 @@ else:
 metric_collector_host = select_metric_collector_hosts_from_hostnames(ams_collector_hosts)
 
 if 'cluster-env' in config['configurations'] and \
-    'metrics_collector_external_port' in config['configurations']['cluster-env']:
+        'metrics_collector_external_port' in config['configurations']['cluster-env']:
   metric_collector_port = config['configurations']['cluster-env']['metrics_collector_external_port']
 else:
   metric_collector_web_address = default("/configurations/ams-site/timeline.metrics.service.webapp.address", "0.0.0.0:6188")
@@ -114,10 +114,10 @@ stack_name = default("/clusterLevelParams/stack_name", None)
 dashboards_dirs = []
 # Stack specific
 dashboards_dirs.append(os.path.join(agent_cache_dir, service_package_folder,
-                                   'files', 'grafana-dashboards', stack_name))
+                                    'files', 'grafana-dashboards', stack_name))
 # Default
 dashboards_dirs.append(os.path.join(agent_cache_dir, service_package_folder,
-                                   'files', 'grafana-dashboards', 'default'))
+                                    'files', 'grafana-dashboards', 'default'))
 
 # Custom services
 dashboards_dirs.append(os.path.join(agent_cache_dir, 'dashboards', 'grafana-dashboards'))
@@ -183,9 +183,6 @@ ams_grafana_cert_file = default("/configurations/ams-grafana-ini/cert_file", '/e
 ams_grafana_cert_key = default("/configurations/ams-grafana-ini/cert_key", '/etc/ambari-metrics/conf/ams-grafana.key')
 ams_grafana_ca_cert = default("/configurations/ams-grafana-ini/ca_cert", None)
 
-grafana_connect_attempts = max(int(default('/configurations/ams-grafana-env/metrics_grafana_connect_attempts', 15)), 1)
-grafana_connect_retry_delay = max(int(default('/configurations/ams-grafana-env/metrics_grafana_connect_retry_delay', 20)), 1)
-
 ams_hbase_home_dir = "/usr/lib/ams-hbase/"
 
 ams_hbase_init_check_enabled = default("/configurations/ams-site/timeline.metrics.hbase.init.check.enabled", True)
@@ -205,8 +202,8 @@ is_hbase_distributed = config['configurations']['ams-hbase-site']['hbase.cluster
 is_local_fs_rootdir = hbase_root_dir.startswith('file://')
 
 # security is disabled for embedded mode, when HBase is backed by file
-security_enabled = False
-#security_enabled = False if not is_hbase_distributed else config['configurations']['cluster-env']['security_enabled']
+security_enabled = False if not is_hbase_distributed else config['configurations']['cluster-env']['security_enabled']
+run_kinit = default('/configurations/ams-site/timeline.metrics.run_kinit_before_start', True)
 
 # this is "hadoop-metrics.properties" for 1.x stacks
 metric_prop_file_name = "hadoop-metrics2-hbase.properties"
@@ -283,7 +280,7 @@ else:
   cluster_zookeeper_clientPort = '2181'
 
 if not is_hbase_distributed:
-  zookeeper_quorum_hosts = hostname
+  zookeeper_quorum_hosts = "localhost"
   zookeeper_clientPort = '61181'
 else:
   zookeeper_quorum_hosts = cluster_zookeeper_quorum_hosts
@@ -394,7 +391,6 @@ hdfs_user_keytab = config['configurations']['hadoop-env']['hdfs_user_keytab']
 hdfs_user = config['configurations']['hadoop-env']['hdfs_user']
 hdfs_principal_name = config['configurations']['hadoop-env']['hdfs_principal_name']
 
-
 clusterHostInfoDict = config["clusterHostInfo"]
 min_hadoop_sink_version = default("/configurations/ams-env/min_ambari_metrics_hadoop_sink_version", "2.7.0.0")
 
@@ -418,8 +414,8 @@ HdfsResource = functools.partial(
   hdfs_site = hdfs_site,
   default_fs = default_fs,
   immutable_paths = get_not_managed_resources(),
-  dfs_type = dfs_type
- )
+  dfs_type = dfs_type,
+)
 
 
 
