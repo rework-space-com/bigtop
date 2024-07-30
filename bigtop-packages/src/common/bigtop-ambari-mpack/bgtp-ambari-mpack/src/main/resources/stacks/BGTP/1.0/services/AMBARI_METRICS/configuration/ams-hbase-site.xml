@@ -67,7 +67,7 @@
   </property>
   <property>
     <name>hbase.cluster.distributed</name>
-    <value>true</value>
+    <value>false</value>
     <description>
       The mode the cluster will be in. Possible values are false for
       standalone mode and true for distributed mode. If false, startup will run
@@ -205,7 +205,7 @@
     <name>hbase.normalizer.enabled</name>
     <value>false</value>
     <description>If set to true, Master will try to keep region size
-    within each table approximately the same.</description>
+      within each table approximately the same.</description>
     <on-ambari-upgrade add="true"/>
   </property>
   <property>
@@ -405,7 +405,7 @@
   </property>
   <property>
     <name>hbase.zookeeper.peerport</name>
-    <value>2888</value>
+    <value>61288</value>
     <value-attributes>
       <type>int</type>
     </value-attributes>
@@ -413,7 +413,7 @@
   </property>
   <property>
     <name>hbase.zookeeper.leaderport</name>
-    <value>3888</value>
+    <value>61388</value>
     <value-attributes>
       <type>int</type>
     </value-attributes>
