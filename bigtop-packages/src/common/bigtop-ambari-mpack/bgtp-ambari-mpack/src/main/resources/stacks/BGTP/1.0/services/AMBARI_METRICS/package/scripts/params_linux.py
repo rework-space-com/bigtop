@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -45,8 +45,15 @@ major_stack_version = get_major_version(stack_version_formatted)
 
 #hadoop params
 if rpm_version is not None:
-  #RPM versioning support
-  rpm_version = default("/configurations/hadoop-env/rpm_version", None)
+    #RPM versioning support
+    rpm_version = default("/configurations/hadoop-env/rpm_version", None)
+
+create_hbase_jna_symlink = False
+underscored_version = stack_version_unformatted.replace('.', '_')
+dashed_version = stack_version_unformatted.replace('.', '-')
+if OSCheck.is_ubuntu_family():
+    create_hbase_jna_symlink = True
+
 
 hadoop_native_lib = format("/usr/lib/ams-hbase/lib/hadoop-native")
 hadoop_bin_dir = "/usr/bin"
@@ -63,11 +70,17 @@ sudo = AMBARI_SUDO_BINARY
 
 dfs_type = default("/clusterLevelParams/dfs_type", "")
 
-zk_principal_name = default("/configurations/zookeeper-env/zookeeper_principal_name", "zookeeper/_HOST@EXAMPLE.COM")
-zk_principal_user = zk_principal_name.split('/')[0]
-
 hbase_regionserver_shutdown_timeout = expect('/configurations/ams-hbase-env/hbase_regionserver_shutdown_timeout', int,
                                              30)
 
 grafana_pid_file = format("{ams_grafana_pid_dir}/grafana-server.pid")
 grafana_process_exists_cmd = as_user(format("test -f {grafana_pid_file} && ps -p `cat {grafana_pid_file}`"), ams_user)
+
+
+mount_table_content = None
+if 'viewfs-mount-table' in config['configurations']:
+    xml_inclusion_file_name = 'viewfs-mount-table.xml'
+    mount_table = config['configurations']['viewfs-mount-table']
+
+    if 'content' in mount_table and mount_table['content'].strip():
+        mount_table_content = mount_table['content']
