@@ -86,7 +86,7 @@
               "app": "ams-hbase",
               "downsampleAggregator": "avg",
               "errors": {},
-              "metric": "master.AssignmentManager.ritCount",
+              "metric": "master.AssignmentManger.ritCount",
               "precision": "default",
               "refId": "A",
               "templatedHost": "%"
@@ -155,7 +155,7 @@
               "app": "ams-hbase",
               "downsampleAggregator": "avg",
               "errors": {},
-              "metric": "master.AssignmentManager.ritCountOverThreshold",
+              "metric": "master.AssignmentManger.ritCountOverThreshold",
               "precision": "default",
               "refId": "A",
               "templatedHost": "%"
@@ -224,7 +224,7 @@
               "app": "ams-hbase",
               "downsampleAggregator": "avg",
               "errors": {},
-              "metric": "master.AssignmentManager.ritOldestAge",
+              "metric": "master.AssignmentManger.ritOldestAge",
               "precision": "default",
               "refId": "A",
               "templatedHost": "%"
@@ -1636,7 +1636,7 @@
       },
       {
         "allFormat": "glob",
-        "current": null,
+        "current": {},
         "datasource": null,
         "includeAll": false,
         "label": "Cluster",
@@ -1645,7 +1645,7 @@
         "name": "cluster",
         "options": [],
         "query": "cluster",
-        "refresh": true,
+        "refresh": 1,
         "regex": "",
         "type": "query"
       },
@@ -1670,7 +1670,7 @@
         ],
         "label": "Hosts",
         "query": "hosts.$cluster",
-        "refresh": true,
+        "refresh": 1,
         "regex": "",
         "type": "query"
       }
