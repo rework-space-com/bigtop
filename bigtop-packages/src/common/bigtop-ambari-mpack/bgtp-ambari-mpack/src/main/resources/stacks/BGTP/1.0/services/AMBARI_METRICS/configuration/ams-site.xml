@@ -22,8 +22,7 @@
 <configuration>
   <property>
     <name>timeline.metrics.service.operation.mode</name>
-    <!--<value>embedded</value>-->
-    <value>distributed</value>
+    <value>embedded</value>
     <display-name>Metrics Service operation mode</display-name>
     <description>
       Service Operation modes:
@@ -708,7 +707,7 @@
   </property>
   <property>
     <name>timeline.metrics.downsampler.topn.metric.patterns</name>
-    <value></value>
+    <value>dfs.NNTopUserOpCounts.windowMs=60000.op=__%.user=%,dfs.NNTopUserOpCounts.windowMs=300000.op=__%.user=%,dfs.NNTopUserOpCounts.windowMs=1500000.op=__%.user=%</value>
     <description>
       Commas separated list of metric name regular expressions that are candidates for Top N downsampling.
     </description>
@@ -735,7 +734,7 @@
   </property>
   <property>
     <name>timeline.metrics.downsampler.event.metric.patterns</name>
-    <value></value>
+    <value>topology\.%</value>
     <description>
       Commas separated list of metric name regular expressions that are like events. No interpolation will be done for such
       metrics, and the downsampling SUM aggregators will sum the values across time instead of averaging them out.
@@ -813,7 +812,7 @@
   </property>
   <property>
     <name>timeline.metrics.transient.metric.patterns</name>
-    <value>topology\.%,dfs.NNTopUserOpCounts.windowMs=60000.op=__%.user=%,dfs.NNTopUserOpCounts.windowMs=300000.op=__%.user=%,dfs.NNTopUserOpCounts.windowMs=1500000.op=__%.user=%</value>
+    <value>topology\.%</value>
     <description>
       Comma separated list of metric patterns that will enable them to be stored, queried, aggregated and purged
       separately so as to decrease pressure on low volume high density metrics aggregation.
@@ -823,5 +822,4 @@
       <empty-value-valid>true</empty-value-valid>
     </value-attributes>
   </property>
-
 </configuration>
