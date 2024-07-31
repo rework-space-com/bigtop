@@ -21,21 +21,17 @@ limitations under the License.
 import imp
 import re
 import os
-import sys
-import socket
 import traceback
 from math import ceil, floor, log
 
 
-from resource_management.core.logger import Logger
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-STACKS_DIR = os.path.join(SCRIPT_DIR, '../../../stacks/')
+STACKS_DIR = os.path.join(SCRIPT_DIR, '../../../../../stacks/')
 PARENT_FILE = os.path.join(STACKS_DIR, 'service_advisor.py')
-if "BASE_SERVICE_ADVISOR" in os.environ:
-  PARENT_FILE = os.environ["BASE_SERVICE_ADVISOR"]
 
 try:
+  if "BASE_SERVICE_ADVISOR" in os.environ:
+    PARENT_FILE = os.environ["BASE_SERVICE_ADVISOR"]
   with open(PARENT_FILE, 'rb') as fp:
     service_advisor = imp.load_module('service_advisor', fp, PARENT_FILE, ('.py', 'rb', imp.PY_SOURCE))
 except Exception as e:
@@ -155,19 +151,9 @@ class AMBARI_METRICSServiceAdvisor(service_advisor.ServiceAdvisor):
       "KAFKA": {
         "KAFKA_BROKER": HEAP_PER_MASTER_COMPONENT
       },
-      "FLUME": {
-        "FLUME_HANDLER": HEAP_PER_SLAVE_COMPONENT
-      },
-      "STORM": {
-        "NIMBUS": HEAP_PER_MASTER_COMPONENT,
-      },
       "AMBARI_METRICS": {
         "METRICS_COLLECTOR": HEAP_PER_MASTER_COMPONENT,
         "METRICS_MONITOR": HEAP_PER_SLAVE_COMPONENT
-      },
-      "ACCUMULO": {
-        "ACCUMULO_MASTER": HEAP_PER_MASTER_COMPONENT,
-        "ACCUMULO_TSERVER": HEAP_PER_SLAVE_COMPONENT
       },
       "LOGSEARCH": {
         "LOGSEARCH_LOGFEEDER" : HEAP_PER_SLAVE_COMPONENT
@@ -281,7 +267,7 @@ class AMBARI_METRICSRecommender(service_advisor.ServiceAdvisor):
 
     defaultFs = 'file:///'
     if "core-site" in services["configurations"] and \
-      "fs.defaultFS" in services["configurations"]["core-site"]["properties"]:
+            "fs.defaultFS" in services["configurations"]["core-site"]["properties"]:
       defaultFs = services["configurations"]["core-site"]["properties"]["fs.defaultFS"]
 
     operatingMode = "embedded"
@@ -438,8 +424,8 @@ class AMBARI_METRICSRecommender(service_advisor.ServiceAdvisor):
         for component in service['components']:
           if 'StackServiceComponents' in component:
             # If Grafana is installed the hostnames would indicate its location
-            if 'METRICS_GRAFANA' in component['StackServiceComponents']['component_name'] and\
-              len(component['StackServiceComponents']['hostnames']) != 0:
+            if 'METRICS_GRAFANA' in component['StackServiceComponents']['component_name'] and \
+                    len(component['StackServiceComponents']['hostnames']) != 0:
               component_grafana_exists = True
               break
     pass
@@ -539,12 +525,12 @@ class AMBARI_METRICSValidator(service_advisor.ServiceAdvisor):
     zkPort = self.getZKPort(services)
     hbase_zk_client_port_item = None
     if distributed.lower() == "true" and op_mode == "distributed" and \
-        hbase_zk_client_port != zkPort and hbase_zk_client_port != "{{zookeeper_clientPort}}":
+            hbase_zk_client_port != zkPort and hbase_zk_client_port != "{{zookeeper_clientPort}}":
       hbase_zk_client_port_item = self.getErrorItem("In AMS distributed mode, hbase.zookeeper.property.clientPort "
                                                     "should be the cluster zookeeper server port : {0}".format(zkPort))
 
     if distributed.lower() == "false" and op_mode == "embedded" and \
-        hbase_zk_client_port == zkPort and hbase_zk_client_port != "{{zookeeper_clientPort}}":
+            hbase_zk_client_port == zkPort and hbase_zk_client_port != "{{zookeeper_clientPort}}":
       hbase_zk_client_port_item = self.getErrorItem("In AMS embedded mode, hbase.zookeeper.property.clientPort "
                                                     "should be a different port than cluster zookeeper port."
                                                     "(default:61181)")
@@ -572,7 +558,7 @@ class AMBARI_METRICSValidator(service_advisor.ServiceAdvisor):
             # hbase.rootdir and hbase.tmp.dir shouldn't point to the same partition
             # if multiple preferred_mountpoints exist
             if hbase_rootdir_mountpoint == hbase_tmpdir_mountpoint and \
-              len(preferred_mountpoints) > 1:
+                    len(preferred_mountpoints) > 1:
               item = self.getWarnItem("Consider not using {0} partition for storing metrics temporary data. "
                                       "{0} partition is already used as hbase.rootdir to store metrics data".format(hbase_tmpdir_mountpoint))
               validationItems.extend([{"config-name":'hbase.tmp.dir', "item": item}])
@@ -583,7 +569,7 @@ class AMBARI_METRICSValidator(service_advisor.ServiceAdvisor):
             hdfs_site = self.getSiteProperties(configurations, "hdfs-site")
             dfs_datadirs = hdfs_site.get("dfs.datanode.data.dir").split(",") if hdfs_site and "dfs.datanode.data.dir" in hdfs_site else []
             if dn_hosts and collectorHostName in dn_hosts and ams_site and \
-              dfs_datadirs and len(preferred_mountpoints) > len(dfs_datadirs):
+                    dfs_datadirs and len(preferred_mountpoints) > len(dfs_datadirs):
               for dfs_datadir in dfs_datadirs:
                 dfs_datadir_mountpoint = self.getMountPointForDir(dfs_datadir, mountPoints)
                 if dfs_datadir_mountpoint == hbase_rootdir_mountpoint:
@@ -703,15 +689,15 @@ class AMBARI_METRICSValidator(service_advisor.ServiceAdvisor):
           if host["Hosts"]["host_name"] == collectorHostName:
             # AMS Collector co-hosted with other master components in bigger clusters
             if len(hosts['items']) > 31 and \
-                            len(hostMasterComponents[collectorHostName]) > 2 and \
-                            host["Hosts"]["total_mem"] < 32*mb: # < 32Gb(total_mem in k)
+                    len(hostMasterComponents[collectorHostName]) > 2 and \
+                    host["Hosts"]["total_mem"] < 32*mb: # < 32Gb(total_mem in k)
               masterHostMessage = "Host {0} is used by multiple master components ({1}). " \
                                   "It is recommended to use a separate host for the " \
                                   "Ambari Metrics Collector component and ensure " \
                                   "the host has sufficient memory available."
 
               hbaseMasterHeapsizeItem = self.getWarnItem(masterHostMessage.format(
-                  collectorHostName, str(", ".join(hostMasterComponents[collectorHostName]))))
+                collectorHostName, str(", ".join(hostMasterComponents[collectorHostName]))))
               if hbaseMasterHeapsizeItem:
                 validationItems.extend([{"config-name": "hbase_master_heapsize", "item": hbaseMasterHeapsizeItem}])
       pass
@@ -762,7 +748,7 @@ class AMBARI_METRICSValidator(service_advisor.ServiceAdvisor):
     grafana_pwd = properties.get("metrics_grafana_password")
     grafana_pwd_length_item = None
     if len(grafana_pwd) < 4:
-      grafana_pwd_length_item = self.getErrorItem("Grafana password length should be at least 4.")
+      grafana_pwd_length_item = self.getNotApplicableItem("Grafana password length should be at least 4.")
       pass
     validationItems.extend([{"config-name":'metrics_grafana_password', "item": grafana_pwd_length_item }])
     return self.toConfigurationValidationProblems(validationItems, "ams-site")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -35,6 +35,8 @@ import ambari_simplejson as json
 import ambari_commons.network as network
 import os
 
+GRAFANA_CONNECT_TRIES = 15
+GRAFANA_CONNECT_TIMEOUT = 20
 GRAFANA_SEARCH_BUILTIN_DASHBOARDS = "/api/search?tag=builtin"
 GRAFANA_DATASOURCE_URL = "/api/datasources"
 GRAFANA_USER_URL = "/api/user"
@@ -44,15 +46,14 @@ METRICS_GRAFANA_DATASOURCE_NAME = "AMBARI_METRICS"
 Server = namedtuple('Server', [ 'protocol', 'host', 'port', 'user', 'password' ])
 
 def perform_grafana_get_call(url, server):
-  import params
-
   grafana_https_enabled = server.protocol.lower() == 'https'
   response = None
   ca_certs = None
   if grafana_https_enabled:
+    import params
     ca_certs = params.ams_grafana_ca_cert
 
-  for i in xrange(0, params.grafana_connect_attempts):
+  for i in xrange(0, GRAFANA_CONNECT_TRIES):
     try:
       conn = network.get_http_connection(
         server.host,
@@ -72,10 +73,10 @@ def perform_grafana_get_call(url, server):
       Logger.info("Http response: %s %s" % (response.status, response.reason))
       break
     except (httplib.HTTPException, socket.error) as ex:
-      if i < params.grafana_connect_attempts - 1:
+      if i < GRAFANA_CONNECT_TRIES - 1:
+        time.sleep(GRAFANA_CONNECT_TIMEOUT)
         Logger.info("Connection to Grafana failed. Next retry in %s seconds."
-                    % (params.grafana_connect_retry_delay))
-        time.sleep(params.grafana_connect_retry_delay)
+                    % (GRAFANA_CONNECT_TIMEOUT))
         continue
       else:
         raise Fail("Ambari Metrics Grafana update failed due to: %s" % str(ex))
@@ -84,8 +85,6 @@ def perform_grafana_get_call(url, server):
   return response
 
 def perform_grafana_put_call(url, id, payload, server):
-  import params
-
   response = None
   data = None
   userAndPass = b64encode('{0}:{1}'.format(server.user, server.password))
@@ -95,9 +94,10 @@ def perform_grafana_put_call(url, id, payload, server):
 
   ca_certs = None
   if grafana_https_enabled:
+    import params
     ca_certs = params.ams_grafana_ca_cert
 
-  for i in xrange(0, params.grafana_connect_attempts):
+  for i in xrange(0, GRAFANA_CONNECT_TRIES):
     try:
       conn = network.get_http_connection(
         server.host,
@@ -113,10 +113,10 @@ def perform_grafana_put_call(url, id, payload, server):
       conn.close()
       break
     except (httplib.HTTPException, socket.error) as ex:
-      if i < params.grafana_connect_attempts - 1:
+      if i < GRAFANA_CONNECT_TRIES - 1:
+        time.sleep(GRAFANA_CONNECT_TIMEOUT)
         Logger.info("Connection to Grafana failed. Next retry in %s seconds."
-                    % (params.grafana_connect_retry_delay))
-        time.sleep(params.grafana_connect_retry_delay)
+                    % (GRAFANA_CONNECT_TIMEOUT))
         continue
       else:
         raise Fail("Ambari Metrics Grafana update failed due to: %s" % str(ex))
@@ -125,8 +125,6 @@ def perform_grafana_put_call(url, id, payload, server):
   return (response, data)
 
 def perform_grafana_post_call(url, payload, server):
-  import params
-
   response = None
   data = None
   userAndPass = b64encode('{0}:{1}'.format(server.user, server.password))
@@ -137,9 +135,10 @@ def perform_grafana_post_call(url, payload, server):
 
   ca_certs = None
   if grafana_https_enabled:
+    import params
     ca_certs = params.ams_grafana_ca_cert
 
-  for i in xrange(0, params.grafana_connect_attempts):
+  for i in xrange(0, GRAFANA_CONNECT_TRIES):
     try:
       Logger.info("Connecting (POST) to %s:%s%s" % (server.host, server.port, url))
       conn = network.get_http_connection(
@@ -154,20 +153,20 @@ def perform_grafana_post_call(url, payload, server):
       response = conn.getresponse()
       Logger.info("Http response: %s %s" % (response.status, response.reason))
       if response.status == 401: #Intermittent error thrown from Grafana
-        if i < params.grafana_connect_attempts - 1:
+        if i < GRAFANA_CONNECT_TRIES - 1:
+          time.sleep(GRAFANA_CONNECT_TIMEOUT)
           Logger.info("Connection to Grafana failed. Next retry in %s seconds."
-                  % (params.grafana_connect_retry_delay))
-          time.sleep(params.grafana_connect_retry_delay)
+                      % (GRAFANA_CONNECT_TIMEOUT))
           continue
       data = response.read()
       Logger.info("Http data: %s" % data)
       conn.close()
       break
     except (httplib.HTTPException, socket.error) as ex:
-      if i < params.grafana_connect_attempts - 1:
+      if i < GRAFANA_CONNECT_TRIES - 1:
+        time.sleep(GRAFANA_CONNECT_TIMEOUT)
         Logger.info("Connection to Grafana failed. Next retry in %s seconds."
-                    % (params.grafana_connect_retry_delay))
-        time.sleep(params.grafana_connect_retry_delay)
+                    % (GRAFANA_CONNECT_TIMEOUT))
         continue
       else:
         raise Fail("Ambari Metrics Grafana update failed due to: %s" % str(ex))
@@ -176,16 +175,15 @@ def perform_grafana_post_call(url, payload, server):
   return (response, data)
 
 def perform_grafana_delete_call(url, server):
-  import params
-
   grafana_https_enabled = server.protocol.lower() == 'https'
   response = None
 
   ca_certs = None
   if grafana_https_enabled:
+    import params
     ca_certs = params.ams_grafana_ca_cert
 
-  for i in xrange(0, params.grafana_connect_attempts):
+  for i in xrange(0, GRAFANA_CONNECT_TRIES):
     try:
       conn = network.get_http_connection(
         server.host,
@@ -204,10 +202,10 @@ def perform_grafana_delete_call(url, server):
       Logger.info("Http response: %s %s" % (response.status, response.reason))
       break
     except (httplib.HTTPException, socket.error) as ex:
-      if i < params.grafana_connect_attempts - 1:
+      if i < GRAFANA_CONNECT_TRIES - 1:
+        time.sleep(GRAFANA_CONNECT_TIMEOUT)
         Logger.info("Connection to Grafana failed. Next retry in %s seconds."
-                    % (params.grafana_connect_retry_delay))
-        time.sleep(params.grafana_connect_retry_delay)
+                    % (GRAFANA_CONNECT_TIMEOUT))
         continue
       else:
         raise Fail("Ambari Metrics Grafana update failed due to: %s" % str(ex))
@@ -221,26 +219,26 @@ def is_unchanged_datasource_url(grafana_datasource_url, new_datasource_host):
   Logger.debug("parsed url: scheme = %s, host = %s, port = %s" % (
     parsed_url.scheme, parsed_url.hostname, parsed_url.port))
   Logger.debug("collector: scheme = %s, host = %s, port = %s" %
-              (params.metric_collector_protocol, new_datasource_host,
-               params.metric_collector_port))
+               (params.metric_collector_protocol, new_datasource_host,
+                params.metric_collector_port))
 
   return parsed_url.scheme.strip() == params.metric_collector_protocol.strip() and \
-         parsed_url.hostname.strip() == new_datasource_host.strip() and \
-         str(parsed_url.port) == params.metric_collector_port
+    parsed_url.hostname.strip() == new_datasource_host.strip() and \
+    str(parsed_url.port) == params.metric_collector_port
 
 def do_ams_collector_post(metric_collector_host, params):
-    ams_metrics_post_url = "/ws/v1/timeline/metrics/"
-    random_value1 = random.random()
-    headers = {"Content-type": "application/json"}
-    ca_certs = os.path.join(params.ams_grafana_conf_dir,
-                            params.metric_truststore_ca_certs)
+  ams_metrics_post_url = "/ws/v1/timeline/metrics/"
+  random_value1 = random.random()
+  headers = {"Content-type": "application/json"}
+  ca_certs = os.path.join(params.ams_grafana_conf_dir,
+                          params.metric_truststore_ca_certs)
 
-    current_time = int(time.time()) * 1000
-    metric_json = Template('smoketest_metrics.json.j2', hostname=params.hostname, random1=random_value1,
-                           current_time=current_time).get_content()
+  current_time = int(time.time()) * 1000
+  metric_json = Template('smoketest_metrics.json.j2', hostname=params.hostname, random1=random_value1,
+                         current_time=current_time).get_content()
 
-    post_metrics_to_collector(ams_metrics_post_url, metric_collector_host, params.metric_collector_port, params.metric_collector_https_enabled,
-                                metric_json, headers, ca_certs)
+  post_metrics_to_collector(ams_metrics_post_url, metric_collector_host, params.metric_collector_port, params.metric_collector_https_enabled,
+                            metric_json, headers, ca_certs)
 
 def create_grafana_admin_pwd():
   import params
@@ -314,7 +312,7 @@ def create_ams_datasource():
   Logger.info("New datasource host will be %s" % new_datasource_host)
 
   ams_datasource_json = Template('metrics_grafana_datasource.json.j2',
-                            ams_datasource_name=METRICS_GRAFANA_DATASOURCE_NAME, ams_datasource_host=new_datasource_host).get_content()
+                                 ams_datasource_name=METRICS_GRAFANA_DATASOURCE_NAME, ams_datasource_host=new_datasource_host).get_content()
   Logger.info("Checking if AMS Grafana datasource already exists")
 
   response = perform_grafana_get_call(GRAFANA_DATASOURCE_URL, server)
@@ -410,9 +408,9 @@ def create_ams_dashboards():
         perform_grafana_delete_call("/api/dashboards/" + dashboard['uri'], server)
       else:
         existing_dashboards.append(
-            Dashboard(uri = dashboard['uri'], id = dashboard['id'],
+          Dashboard(uri = dashboard['uri'], id = dashboard['id'],
                     title = dashboard['title'], tags = dashboard['tags'])
-          )
+        )
     pass
   else:
     Logger.error("Failed to execute search query on Grafana dashboards. "
@@ -443,7 +441,7 @@ def create_ams_dashboards():
           dashboard_def['tags'].append(version)
         else:
           dashboard_def['tags'] = [ 'builtin', version ]
-        
+
         for dashboard in existing_dashboards:
           if dashboard.title == dashboard_def['title']:
             if version not in dashboard.tags:

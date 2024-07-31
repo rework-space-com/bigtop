@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+# !/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -62,7 +62,7 @@ def ams_service(name, action):
 
     if action == 'start':
       Execute(format("{sudo} rm -rf {hbase_tmp_dir}/*.tmp")
-      )
+              )
 
       if not params.is_hbase_distributed:
         File(format("{ams_collector_conf_dir}/core-site.xml"),
@@ -73,7 +73,7 @@ def ams_service(name, action):
              action='delete',
              owner=params.ams_user)
 
-      if params.security_enabled:
+      if params.security_enabled and params.run_kinit:
         kinit_cmd = format("{kinit_path_local} -kt {ams_collector_keytab_path} {ams_collector_jaas_princ};")
         daemon_cmd = format("{kinit_cmd} {cmd} start")
       else:
@@ -82,7 +82,7 @@ def ams_service(name, action):
       try:
         Execute(daemon_cmd,
                 user=params.ams_user
-        )
+                )
       except:
         show_logs(params.ams_collector_log_dir, params.ams_user)
         raise
@@ -92,7 +92,7 @@ def ams_service(name, action):
       daemon_cmd = format("{cmd} stop")
       Execute(daemon_cmd,
               user=params.ams_user
-      )
+              )
 
       pass
     pass
@@ -103,14 +103,14 @@ def ams_service(name, action):
 
     if action == 'start':
       daemon_cmd = format("{cmd} start")
-      
+
       try:
         Execute(daemon_cmd,
                 user=params.ams_user
-        )
+                )
       except:
         show_logs(params.ams_monitor_log_dir, params.ams_user)
-        raise      
+        raise
 
       pass
     elif action == 'stop':
@@ -118,7 +118,7 @@ def ams_service(name, action):
       daemon_cmd = format("{cmd} stop")
       Execute(daemon_cmd,
               user=params.ams_user
-      )
+              )
 
       pass
     pass

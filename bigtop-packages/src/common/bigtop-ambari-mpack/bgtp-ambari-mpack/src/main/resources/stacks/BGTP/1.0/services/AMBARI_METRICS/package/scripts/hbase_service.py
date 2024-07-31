@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -22,57 +22,94 @@ from resource_management.core.resources.system import Execute, File
 from resource_management.libraries.functions.format import format
 
 def hbase_service(
-  name,
-  action = 'start'): # 'start' or 'stop' or 'status'
-    
-    import params
-  
-    role = name
-    cmd = format("{daemon_script} --config {hbase_conf_dir}")
-    pid_file = format("{hbase_pid_dir}/hbase-{hbase_user}-{role}.pid")
-    no_op_test = format("ls {pid_file} >/dev/null 2>&1 && ps `cat {pid_file}` >/dev/null 2>&1")
+        name,
+        action = 'start'): # 'start' or 'stop' or 'status'
 
-    if action == 'start':
+  import params
 
-      daemon_cmd = format("{cmd} start {role}")
-      
-      Execute ( daemon_cmd,
-        not_if = no_op_test,
-        user = params.hbase_user
-      )
-    elif action == 'stop':
-      daemon_cmd = format("{cmd} stop {role}")
+  role = name
+  cmd = format("{daemon_script} --config {hbase_conf_dir}")
+  pid_file = format("{hbase_pid_dir}/hbase-{hbase_user}-{role}.pid")
+  no_op_test = format("ls {pid_file} >/dev/null 2>&1 && ps `cat {pid_file}` >/dev/null 2>&1")
 
-      Execute ( daemon_cmd,
-        user = params.hbase_user,
-        # BUGFIX: hbase regionserver sometimes hangs when nn is in safemode
-        timeout = params.hbase_regionserver_shutdown_timeout,
-        on_timeout = format("{no_op_test} && {sudo} -H -E kill -9 `{sudo} cat {pid_file}`")
-      )
-      
-      File(pid_file,
-        action = "delete",
-      )
-    elif action == 'metricsFIX':
-      Execute(format("{sudo} cp /usr/lib/ambari-server/htrace-core-3*.jar /usr/lib/ams-hbase/lib/client-facing-thirdparty/")
-      )
-      Execute(format("{sudo} rm -f /usr/lib/ambari-metrics-collector/phoenix-core-*.jar")
-      )
-      Execute(format("{sudo} rm -f /usr/lib/ambari-metrics-collector/protobuf-java-3*.jar")
-      )
-      Execute(format("{sudo} rm -f /usr/lib/ambari-metrics-collector/jakarta.ws.rs-api*.jar")
-      )
-      Execute(format("{sudo} rm -f /usr/lib/ambari-metrics-collector/servlet*.jar")
-      )
-      Execute(format("{sudo} wget http://repo.bigtop.apache.org.s3.amazonaws.com/bigtop-stack-binary/3.2.0/centos-7/x86_64/phoenix-hbase-compat-2.4.1-5.1.2.jar -P /usr/lib/ambari-metrics-collector")
-      )
-      Execute(format("{sudo} wget http://repo.bigtop.apache.org.s3.amazonaws.com/bigtop-stack-binary/3.2.0/centos-7/x86_64/phoenix-core-5.1.2.jar -P /usr/lib/ambari-metrics-collector")
-      )
-      Execute(format("{sudo} wget https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/2.6.1/protobuf-java-2.6.1.jar -P /usr/lib/ambari-metrics-collector")
-      )
-      Execute(format("{sudo} cp /usr/lib/ambari-metrics-collector/phoenix-*.jar /usr/lib/ambari-metrics-collector/omid*.jar /usr/lib/ambari-metrics-collector/joda-time-*.jar /usr/lib/ams-hbase/lib/client-facing-thirdparty/")
-      )
-      Execute(format("{sudo} cp /usr/lib/ams-hbase/lib/client-facing-thirdparty/*.jar /usr/lib/ams-hbase/lib")
-      )
-      Execute(format("{sudo} cp /usr/lib/ams-hbase/lib/hbase-*.jar /usr/lib/ams-hbase/lib/hadoop-*.jar /usr/lib/ambari-metrics-collector")
-      )
+  if action == 'start':
+
+    if(params.create_hbase_jna_symlink):
+      setup_symlink(params.target_hbase_jna_dir, params.src_hbase_jna_dir)
+    daemon_cmd = format("{cmd} start {role}")
+
+    Execute ( daemon_cmd,
+              not_if = no_op_test,
+              user = params.hbase_user
+              )
+  elif action == 'stop':
+    daemon_cmd = format("{cmd} stop {role}")
+
+    Execute ( daemon_cmd,
+              user = params.hbase_user,
+              # BUGFIX: hbase regionserver sometimes hangs when nn is in safemode
+              timeout = params.hbase_regionserver_shutdown_timeout,
+              on_timeout = format("{no_op_test} && {sudo} -H -E kill -9 `{sudo} cat {pid_file}`")
+              )
+
+    File(pid_file,
+         action = "delete",
+         )
+
+
+# Used to workaround the hardcoded pid/log dir used on the kafka bash process launcher
+def setup_symlink(target_hbase_jna_dir = '/tmp/hbase',src_hbase_jna_dir = '/run/hbase'):
+  import params
+  backup_folder_path = None
+  backup_folder_suffix = "_tmp"
+  if not os.path.exists(target_hbase_jna_dir):
+    Directory(target_hbase_jna_dir,
+              mode=0750,
+              cd_access='a',
+              owner=params.hbase_user,
+              group=params.user_group,
+              create_parents = True,
+              recursive_ownership = True,
+              )
+  if os.path.exists(src_hbase_jna_dir) and not os.path.islink(src_hbase_jna_dir):
+
+    # Backup existing data before delete if config is changed repeatedly to/from default location at any point in time time, as there may be relevant contents (historic logs)
+    backup_folder_path = backup_dir_contents(src_hbase_jna_dir, backup_folder_suffix)
+
+    Directory(src_hbase_jna_dir,
+              action="delete",
+              create_parents = True)
+
+  elif os.path.islink(src_hbase_jna_dir) and os.path.realpath(src_hbase_jna_dir) != target_hbase_jna_dir:
+    Link(src_hbase_jna_dir,
+         action="delete")
+
+  if not os.path.islink(src_hbase_jna_dir):
+    Link(src_hbase_jna_dir,
+         to=target_hbase_jna_dir)
+
+# Uses agent temp dir to store backup files
+def backup_dir_contents(dir_path, backup_folder_suffix):
+  import params
+  backup_destination_path = params.tmp_dir + os.path.normpath(dir_path)+backup_folder_suffix
+  Directory(backup_destination_path,
+            mode=0754,
+            cd_access='a',
+            owner=params.hbase_user,
+            group=params.user_group,
+            create_parents = True,
+            recursive_ownership = True,
+            )
+  # Safely copy top-level contents to backup folder
+  for file in os.listdir(dir_path):
+    if os.path.isdir(os.path.join(dir_path, file)):
+      Execute(('cp', '-r', os.path.join(dir_path, file), backup_destination_path),
+              sudo=True)
+      Execute(("chown", "-R", format("{hbase_user}:{user_group}"), os.path.join(backup_destination_path, file)),
+              sudo=True)
+    else:
+      File(os.path.join(backup_destination_path, file),
+           owner=params.hbase_user,
+           content = StaticFile(os.path.join(dir_path,file)))
+
+  return backup_destination_path

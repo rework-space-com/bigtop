@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 """
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -22,6 +22,7 @@ from resource_management import Script, Execute
 from resource_management.libraries.functions import format
 from status import check_service_status
 from ams import ams
+from metrics_grafana_util import create_ams_datasource, create_ams_dashboards, create_grafana_admin_pwd
 from resource_management.core.logger import Logger
 from resource_management.core import sudo
 
@@ -43,20 +44,15 @@ class AmsGrafana(Script):
     self.configure(env, action = 'start')
 
     start_cmd = format("{ams_grafana_script} start")
-    try:
-      Execute(start_cmd,
-              user=params.ams_user,
-              not_if = params.grafana_process_exists_cmd,
-             )
-    except:
-      raise
+    Execute(start_cmd,
+            user=params.ams_user,
+            not_if = params.grafana_process_exists_cmd,
+            )
     pidfile = format("{ams_grafana_pid_dir}/grafana-server.pid")
     if not sudo.path_exists(pidfile):
       Logger.warning("Pid file doesn't exist after starting of the component.")
     else:
       Logger.info("Grafana Server has started with pid: {0}".format(sudo.read_file(pidfile).strip()))
-
-    from metrics_grafana_util import create_ams_datasource, create_ams_dashboards, create_grafana_admin_pwd
 
     #Set Grafana admin pwd
     create_grafana_admin_pwd()
