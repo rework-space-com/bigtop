@@ -87,7 +87,7 @@ install -d -p -m 755 $PREFIX${PARENT_DIR}/
 install -p -m 755 ${DISTRO_DIR}/${STACK_SELECTOR} $PREFIX${LIB_DIR}/
 install -p -m 755 ${DISTRO_DIR}/${CONF_SELECTOR} $PREFIX${LIB_DIR}/
 cat > $PREFIX${LIB_DIR}/params.py <<EOF
-#!/usr/bin/env python2
+#!/usr/bin/python2
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
