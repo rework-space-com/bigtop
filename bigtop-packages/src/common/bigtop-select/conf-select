@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python2
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -27,20 +27,14 @@ from params import stack_root
 # The global prefix and current directory
 root = stack_root
 current = root + "/current"
-vconfroot = 'etc'
-lib_root = "usr/lib"
-vconf_name = "conf.dist"
+vconfroot = '/etc'
 packages = ("hadoop", "hbase", "hive", "hive-hcatalog",
-            "kafka", "spark", "tez",
-            "zookeeper", "zeppelin", "flink", "solr", "ranger-admin", "ranger-usersync", "ranger-tagsync")
-''' conf link
-/usr/bigtop/3.2.0/usr/lib/${pname}/conf -> /etc/${pname}/conf -> /etc/alternatives/${pname}-conf -> /usr/bigtop/3.2.0/etc/${pname}/conf.dist.0
-'''
-
+            "kafka", "oozie", "spark", "tez",
+            "zookeeper", "zeppelin", "flink", "solr")
 
 def printHelp():
     print("""
-usage: conf-select [-h] [<command>] --package --stack-version --conf-version
+usage: conf-select [-h] [<command>] package --stack-version --conf-version
 arguments:
   <command>          One of create-conf-dir, set-conf-dir
   <--package>        package name to set
@@ -55,13 +49,12 @@ Commands:
   dry-run-create    : dry run for create conf
 """)
 
-
 def chkPkg(sver, pname):
     '''
     checks package name against the package tuple, check if the package directory exists and returns True
     e.g. /usr/bigtop/3.2.0/usr/lib/zookeeper
     '''
-    pkgdir = os.path.join(root, sver, lib_root, pname)
+    pkgdir = os.path.join(root, sver, pname)
     if not os.path.isdir(pkgdir) or pname not in packages:
         print(pname + " not installed or incorrect package name")
         sys.exit(1)
@@ -73,7 +66,7 @@ def chksVer(sver):
     returns True if the stack version number exists
     e.g. /usr/bigtop/3.2.0/usr/lib
     '''
-    if not os.path.isdir(os.path.join(root, sver, lib_root)):
+    if not os.path.isdir(os.path.join(root, sver)):
         print(sver + " Incorrect stack version")
         sys.exit(1)
     return True
@@ -83,14 +76,12 @@ def chkPath(pname, sver, cver, method):
     '''
     e.g. /usr/bigtop/3.2.0/etc/zookeeper/conf.dist.0
     '''
-    confpath = os.path.join(root, sver, vconfroot, pname, vconf_name)
-    if cver:
-        confpath = os.path.join(root, sver, vconfroot, pname, vconf_name + '.' + cver)
+    confpath = os.path.join(vconfroot, pname, sver, cver)
     if method == "create" and os.path.exists(confpath):
-        print(confpath+" exist already")
+        print (confpath+" exist already")
         sys.exit(1)
     if method == "set" and not os.path.exists(confpath):
-        print(confpath+" does not exist")
+        print (confpath+" does not exist")
         sys.exit(1)
     return True
 
@@ -106,16 +97,10 @@ def check(sver, pname, cver, method):
 
 
 def drcrtConfDir(pname, sver, cver):
-    '''
-    # Not really executing
-    # e.g. /usr/bigtop/3.2.0/etc/zookeeper/conf.dist.0
-    '''
     chksVer(sver)
     chkPkg(sver, pname)
     for confmapkey, confmapval in confmap.items():
-        path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name)
-        if cver:
-            path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name+'.'+cver)
+        path = os.path.join(vconfroot, confmapkey, sver, cver)
         print(path)
 
 
@@ -123,12 +108,10 @@ def crtConfDir(pname, sver, cver):
     '''
     e.g. /usr/bigtop/3.2.0/etc/zookeeper/conf.dist.0
     '''
-    path = os.path.join(root, sver, vconfroot, pname, vconf_name)
+    path = os.path.join(vconfroot, pname, sver, cver)
     check(sver, pname, cver, "create")
     for confmapkey, confmapval in confmap.items():
-        path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name)
-        if cver:
-            path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name+'.'+cver)
+        path = os.path.join(vconfroot, confmapkey, sver, cver)
         try:
             os.makedirs(path)
             print(path)
@@ -145,7 +128,7 @@ def drsetConfDir(pname, sver):
     chkPkg(sver, pname)
     for confmapkey, confmapval in confmap.items():
         # e.g. /usr/bigtop/3.2.0/usr/lib/hive/conf
-        confdir = os.path.join(root, sver, lib_root, pname, confmapval)
+        confdir = os.path.join(root, sver, pname, confmapval)
         if os.path.exists(confdir) and os.path.islink(confdir):
             print(confdir)
         else:
@@ -160,11 +143,9 @@ def setConfDir(pname, sver, cver):
     check(sver, pname, cver, "set")
     for confmapkey, confmapval in confmap.items():
         # e.g. /usr/bigtop/3.2.0/etc/zookeeper/conf.dist.0
-        path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name)
-        if cver:
-            path = os.path.join(root, sver, vconfroot, confmapkey, vconf_name+'.'+cver)
+        path = os.path.join(vconfroot, confmapkey, sver, cver)
         # e.g. /usr/bigtop/3.2.0/usr/lib/zookeeper/conf
-        confdir = os.path.join(root, sver, lib_root, pname, confmapval)
+        confdir = os.path.join(root, sver, pname, confmapval)
 
         if os.path.exists(confdir) and not os.path.islink(confdir):
             raise Exception("Expected confdir %s to be a symlink." % confdir)
@@ -178,12 +159,8 @@ def setConfDir(pname, sver, cver):
             else:
                 os.remove(confdir)
 
-        os.symlink('/etc/{0}/conf'.format(pname), confdir)
-        print(confdir + " -> " + '/etc/{0}/conf'.format(pname))
-        print('alternatives --install /etc/{0}/conf {0}-conf {1} 30'.format(pname, path))
-        os.system('alternatives --install /etc/{0}/conf {0}-conf {1} 30'.format(pname, path))
-        os.system('alternatives --set {0}-conf {1}'.format(pname, path))
-        print('/etc/{0}/conf'.format(pname) + " -> " + path)
+        os.symlink(path, confdir)
+        print(confdir + " -> " + path)
 
 
 # Start of main
@@ -195,7 +172,7 @@ parser.add_option("-p", "--package", action="store", dest="pname",
 parser.add_option("-s", "--stack-version", action="store", dest="sver",
                   help="stack verison number")
 parser.add_option("-c", "--conf-version", action="store", dest="cver",
-                  help="conf verison number", default=None)
+                  help="conf verison number", default = '0' )
 
 (options, args) = parser.parse_args()
 '''default conf mapping'''
@@ -204,8 +181,6 @@ confmap = {options.pname: "conf"}
 if options.pname == "hive-hcatalog":
     confmap = {"hive-hcatalog": "etc/hcatalog",
                "hive-webhcat": "etc/webhcat"}
-
-
 
 if options.help or len(args) == 0:
     printHelp()
