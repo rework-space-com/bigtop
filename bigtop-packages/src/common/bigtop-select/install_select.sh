@@ -21,21 +21,27 @@ usage() {
   echo "
 usage: $0 <options>
   Required not-so-options:
+     --prefix=PREFIX                              path to install into
      --distro-dir=DIR                             path to distro specific files (debian/RPM)
      --build-dir=DIR                              path to build directory
-     --prefix=PREFIX                              path to install into
-     --parent-dir=PARENT_DIR                      path to install stack-root/stack-version
+     --parent-dir=DIR                             path to install stack-root/stack-version
+     --bin-dir=DIR                                path to bin directory
+     --lib-dir=DIR                                path to lib directory
+     --conf-dir=DIR                               path to conf directory
      --bigtop-base-version=BIGTOP_BASE_VERSION    Bigtop Base Version
   "
   exit 1
 }
 OPTS=$(getopt \
-  -n $0 \
+  -n "$0" \
   -o '' \
   -l 'prefix:' \
   -l 'distro-dir:' \
   -l 'build-dir:' \
   -l 'parent-dir:' \
+  -l 'bin-dir:' \
+  -l 'lib-dir:' \
+  -l 'conf-dir:' \
   -l 'bigtop-base-version:' \
   -- "$@")
 if [ $? != 0 ] ; then
@@ -44,12 +50,6 @@ fi
 eval set -- "$OPTS"
 while true ; do
     case "$1" in
-        --parent-dir)
-        PARENT_DIR=$2 ; shift 2
-        ;;
-        --bigtop-base-version)
-        BIGTOP_BASE_VERSION=$2 ; shift 2
-        ;;
         --prefix)
         PREFIX=$2 ; shift 2
         ;;
@@ -58,6 +58,21 @@ while true ; do
         ;;
         --build-dir)
         BUILD_DIR=$2 ; shift 2
+        ;;
+        --parent-dir)
+        PARENT_DIR=$2 ; shift 2
+        ;;
+        --bin-dir)
+        BIN_DIR=$2 ; shift 2
+        ;;
+        --lib-dir)
+        LIB_DIR=$2 ; shift 2
+        ;;
+        --conf-dir)
+        CONF_DIR=$2 ; shift 2
+        ;;
+        --bigtop-base-version)
+        BIGTOP_BASE_VERSION=$2 ; shift 2
         ;;
         --)
         shift ; break
@@ -73,20 +88,20 @@ done
 DIST_DIR=${BUILD_DIR}/dist
 MAN_DIR=${MAN_DIR:-/usr/share/man/man1}
 DOC_DIR=${DOC_DIR:-/usr/share/doc/bigtop-select}
-LIB_DIR=${LIB_DIR:-/usr/lib/bigtop-select}
 BIN_DIR=${BIN_DIR:-/usr/bin}
+LIB_DIR=${LIB_DIR:-/usr/lib/bigtop-select}
 CONF_DIR=${CONF_DIR:-/etc/bigtop-select/conf.dist}
 
-STACK_ROOT_DIR=$(echo ${PARENT_DIR} | sed -e "s/\/${BIGTOP_BASE_VERSION}$//")
+STACK_ROOT_DIR=$(echo "${PARENT_DIR}" | sed -e "s/\/${BIGTOP_BASE_VERSION}$//")
 STACK_SELECTOR=distro-select
 CONF_SELECTOR=conf-select
 
 # Install packages
-install -d -p -m 755 $PREFIX${LIB_DIR}/
-install -d -p -m 755 $PREFIX${PARENT_DIR}/
-install -p -m 755 ${DISTRO_DIR}/${STACK_SELECTOR} $PREFIX${LIB_DIR}/
-install -p -m 755 ${DISTRO_DIR}/${CONF_SELECTOR} $PREFIX${LIB_DIR}/
-cat > $PREFIX${LIB_DIR}/params.py <<EOF
+install -d -p -m 755 "$PREFIX""${LIB_DIR}"/
+install -d -p -m 755 "$PREFIX""${PARENT_DIR}"/
+install -p -m 755 "${DISTRO_DIR}"/${STACK_SELECTOR} "$PREFIX""${LIB_DIR}"/
+install -p -m 755 "${DISTRO_DIR}"/${CONF_SELECTOR} "$PREFIX""${LIB_DIR}"/
+cat > "$PREFIX""${LIB_DIR}"/params.py <<EOF
 #!/usr/bin/python2
 #
 # Licensed to the Apache Software Foundation (ASF) under one
@@ -110,4 +125,4 @@ stack_root = '${STACK_ROOT_DIR}'
 stack_version = '${BIGTOP_BASE_VERSION}'
 
 EOF
-chmod 755 $PREFIX${LIB_DIR}/params.py
+chmod 755 "$PREFIX""${LIB_DIR}"/params.py
