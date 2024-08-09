@@ -22,10 +22,9 @@ import os
 import re
 import sys
 import errno
-from params import stack_root
 
 # The global prefix and current directory
-root = stack_root
+root = "/usr/lib/bigtop-select"
 current = root + "/current"
 vconfroot = '/etc'
 packages = ("hadoop", "hbase", "hive", "hive-hcatalog",
