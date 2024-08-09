@@ -21,11 +21,10 @@ import copy
 import os
 import re
 import sys
-from params import stack_root, stack_version
 
 # The global prefix and current directory
-root = stack_root
-bigtopVersion = stack_version
+root = "/usr/lib/bigtop-select"
+bigtopVersion = "1.0"
 current = root + "/current"
 binDirectory = "/usr/bin"
 versionRegex = re.compile('[-.]')
