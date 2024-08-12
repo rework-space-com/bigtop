@@ -119,12 +119,12 @@
   <property>
     <name>repo_suse_rhel_template</name>
     <value>[{{repo_id}}]
-name={{repo_id}}
-{% if mirror_list %}mirrorlist={{mirror_list}}{% else %}baseurl={{base_url}}{% endif %}
+      name={{repo_id}}
+      {% if mirror_list %}mirrorlist={{mirror_list}}{% else %}baseurl={{base_url}}{% endif %}
 
-path=/
-enabled=1
-gpgcheck=0</value>
+      path=/
+      enabled=1
+      gpgcheck=0</value>
     <description>Template of repositories for rhel and suse.</description>
     <on-ambari-upgrade add="true"/>
   </property>
@@ -138,8 +138,8 @@ gpgcheck=0</value>
     <name>override_uid</name>
     <value>true</value>
     <property-type>ADDITIONAL_USER_PROPERTY</property-type>
-    <display-name>Have Ambari manage UIDs</display-name>
-    <description>Have Ambari manage UIDs</description>
+    <display-name>Use Ambari to Manage Service Accounts UID's</display-name>
+    <description>Ambari will be able to change UID's of service accounts.</description>
     <value-attributes>
       <overridable>false</overridable>
       <type>boolean</type>
@@ -150,9 +150,11 @@ gpgcheck=0</value>
     <name>fetch_nonlocal_groups</name>
     <value>true</value>
     <display-name>Ambari fetch nonlocal groups</display-name>
-    <description>Ambari requires fetching all the groups. This can be slow
-        on envs with enabled ldap. Setting this option to false will enable Ambari,
-        to skip user/group management connected with ldap groups.</description>
+    <description>
+      Ambari requires fetching all the groups. This can be slow
+      on envs with enabled ldap. Setting this option to false will enable Ambari,
+      to skip user/group management connected with ldap groups.
+    </description>
     <value-attributes>
       <overridable>false</overridable>
       <type>boolean</type>
@@ -163,7 +165,7 @@ gpgcheck=0</value>
     <name>managed_hdfs_resource_property_names</name>
     <value/>
     <description>Comma separated list of property names with HDFS resource paths.
-        Resource from this list will be managed even if it is marked as not managed in the stack</description>
+      Resource from this list will be managed even if it is marked as not managed in the stack</description>
     <value-attributes>
       <overridable>false</overridable>
       <empty-value-valid>true</empty-value-valid>
@@ -200,9 +202,24 @@ gpgcheck=0</value>
     </value-attributes>
     <on-ambari-upgrade add="true"/>
   </property>
+  <!-- Define stack_packages property in the base stack. DO NOT override this property for each stack version -->
+  <property>
+    <name>stack_packages</name>
+    <value/>
+    <description>Associations between component and stack-select tools.</description>
+    <property-type>VALUE_FROM_PROPERTY_FILE</property-type>
+    <value-attributes>
+      <property-file-name>stack_packages.json</property-file-name>
+      <property-file-type>json</property-file-type>
+      <read-only>true</read-only>
+      <overridable>false</overridable>
+      <visible>false</visible>
+    </value-attributes>
+    <on-ambari-upgrade add="true"/>
+  </property>
   <property>
     <name>stack_root</name>
-    <value>{"BGTP":"/usr/bgtp"}</value>
+    <value>{"BGTP":"/usr/lib/bigtop-select"}</value>
     <description>Stack root folder</description>
     <value-attributes>
       <read-only>true</read-only>
