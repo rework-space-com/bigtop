@@ -24,7 +24,7 @@ import sys
 
 # The global prefix and current directory
 root = "/usr/lib/bigtop-select"
-bigtopVersion = "3.2.1"
+bigtopVersion = "1.0"
 current = root + "/current"
 binDirectory = "/usr/bin"
 versionRegex = re.compile('[-.]')
