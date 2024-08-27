@@ -299,6 +299,9 @@
                         <package>
                             <name>hive-webhcat</name>
                         </package>
+                        <package>
+                            <name>ranger-hive-plugin</name>
+                        </package>
                     </packages>
                 </osSpecific>
             </osSpecifics>

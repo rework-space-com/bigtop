@@ -315,7 +315,7 @@
         </osSpecific>
 
         <osSpecific>
-          <osFamily>debian7,ubuntu12,ubuntu14,ubuntu16</osFamily>
+          <osFamily>debian7,ubuntu12,ubuntu14,ubuntu16,ubuntu22</osFamily>
           <packages>
             <package>
               <name>hadoop-client</name>
@@ -334,6 +334,9 @@
             </package>
             <package>
               <name>libhdfs0-dev</name>
+            </package>
+            <package>
+              <name>ranger-hdfs-plugin</name>
             </package>
           </packages>
         </osSpecific>
