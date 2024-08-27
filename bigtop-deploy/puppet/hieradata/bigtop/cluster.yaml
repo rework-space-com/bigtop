@@ -211,5 +211,8 @@ flink::common::jobmanager_failover_strategy: "region"
 flink::common::rest_port: "8081"
 
 
+# Ambari
+ambari::agent::server_host: "%{hiera('bigtop::hadoop_head_node')}"
+
 # Ranger
 ranger::admin::admin_password: "Admin01234"
