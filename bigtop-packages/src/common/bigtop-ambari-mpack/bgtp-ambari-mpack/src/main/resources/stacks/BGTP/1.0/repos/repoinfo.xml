@@ -16,11 +16,11 @@
    limitations under the License.
 -->
 <reposinfo>
-  <os family="redhat7">
+  <os family="ubuntu22">
     <repo>
-      <baseurl>http://repos.bigtop.apache.org/releases/3.2.0/centos/7/$basearch</baseurl>
+      <baseurl>https://nexus-rm.rework-space.com/repository/bigtop-3.3.0-jammy/</baseurl>
       <repoid>BGTP-1.0</repoid>
-      <reponame>BGTP</reponame>
+      <reponame>jammy</reponame>
     </repo>
   </os>
 </reposinfo>
