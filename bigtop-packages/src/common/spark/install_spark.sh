@@ -162,7 +162,7 @@ ln -s $NP_ETC_SPARK/conf $PREFIX/$LIB_DIR/conf
 # Copy in the wrappers
 install -d -m 0755 $PREFIX/$BIN_DIR
 for wrap in bin/spark-class bin/spark-shell bin/spark-sql bin/spark-submit bin/find-spark-home bin/sparkR; do
-  cat > $PREFIX/$BIN_DIR/$(basename $wrap) <<EOF
+  cat > $PREFIX/$BIN_DIR/"$(basename $wrap)" <<EOF
 #!/bin/bash
 
 # Autodetect JAVA_HOME if not defined
@@ -170,7 +170,7 @@ for wrap in bin/spark-class bin/spark-shell bin/spark-sql bin/spark-submit bin/f
 
 exec $LIB_DIR/$wrap "\$@"
 EOF
-  chmod 755 $PREFIX/$BIN_DIR/$(basename $wrap)
+  chmod 755 $PREFIX/$BIN_DIR/"$(basename $wrap)"
 done
 
 ln -s /var/run/spark/work $PREFIX/$LIB_DIR/work
@@ -221,7 +221,7 @@ ln -s ../../jars/datanucleus-core*.jar datanucleus-core.jar
 ln -s ../../jars/datanucleus-rdbms*.jar datanucleus-rdbms.jar
 popd
 pushd $PREFIX/$LIB_DIR/external/lib
-for j in $(ls *.jar); do
-  ln -s $j $(echo $j | sed -n 's/\(.*\)\(_.\+\)\(.jar\)/\1\3/p')
+for j in *.jar; do
+  ln -s "$j" "$(echo "$j" | sed -n 's/\(.*\)\(_.\+\)\(.jar\)/\1\3/p')"
 done
 popd
