@@ -57,7 +57,7 @@ Description: History server for Apache Spark
 
 Package: spark-thriftserver
 Architecture: all
-Depends: spark-core (= ${source:Version})
+Depends: spark-core (= ${source:Version}), spark-datanucleus
 Description: Thrift server for Spark SQL
  Thrift server for Spark SQL
 
