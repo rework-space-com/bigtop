@@ -23,7 +23,7 @@
       <name>YARN</name>
       <displayName>YARN</displayName>
       <comment>Apache Hadoop NextGen MapReduce (YARN)</comment>
-      <version>Bigtop+3.2</version>
+      <version>3.3.5</version>
       <components>
 
         <component>

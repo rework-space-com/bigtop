@@ -21,7 +21,7 @@
     <service>
       <name>AMBARI_METRICS</name>
       <displayName>Ambari Metrics</displayName>
-      <version>ODP+1.0</version>
+      <version>ODP-2.7.8</version>
       <comment>A system for metrics collection that provides storage and retrieval capability for metrics collected from the cluster
       </comment>
       <components>
