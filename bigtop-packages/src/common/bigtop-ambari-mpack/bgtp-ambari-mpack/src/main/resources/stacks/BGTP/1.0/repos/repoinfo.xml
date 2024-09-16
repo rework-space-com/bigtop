@@ -25,7 +25,7 @@
   </os>
   <os family="ubuntu22">
     <repo>
-      <baseurl>https://nexus-rm.rework-space.com/repository/bigtop-jammy/</baseurl>
+      <baseurl>https://nexus-rm.rework-space.com/repository/bigtop-3.2.1-jammy/</baseurl>
       <repoid>BGTP-1.0</repoid>
       <reponame>jammy</reponame>
     </repo>
