@@ -272,6 +272,9 @@
             <package>
               <name>hadoop</name>
             </package>
+            <package>
+              <name>ranger-hdfs-plugin</name>
+            </package>
           </packages>
         </osSpecific>
 
@@ -334,6 +337,9 @@
             </package>
             <package>
               <name>libhdfs0-dev</name>
+            </package>
+            <package>
+              <name>ranger-hdfs-plugin</name>
             </package>
           </packages>
         </osSpecific>

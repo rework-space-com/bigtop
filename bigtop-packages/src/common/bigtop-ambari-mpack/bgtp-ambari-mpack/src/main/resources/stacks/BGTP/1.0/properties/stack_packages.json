@@ -19,7 +19,8 @@
         "HBASE_MASTER": {
           "STACK-SELECT-PACKAGE": "hbase-master",
           "INSTALL": [
-            "hbase-master"
+            "hbase-master",
+            "hbase-client"
           ],
           "PATCH": [
             "hbase-master"
@@ -31,7 +32,8 @@
         "HBASE_REGIONSERVER": {
           "STACK-SELECT-PACKAGE": "hbase-regionserver",
           "INSTALL": [
-            "hbase-regionserver"
+            "hbase-regionserver",
+            "hbase-client"
           ],
           "PATCH": [
             "hbase-regionserver"
@@ -57,7 +59,8 @@
         "DATANODE": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-datanode",
           "INSTALL": [
-            "hadoop-hdfs-datanode"
+            "hadoop-hdfs-datanode",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-datanode"
@@ -69,7 +72,8 @@
         "HDFS_CLIENT": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-client",
           "INSTALL": [
-            "hadoop-hdfs-client"
+            "hadoop-hdfs-client",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-client"
@@ -81,7 +85,8 @@
         "NAMENODE": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-namenode",
           "INSTALL": [
-            "hadoop-hdfs-namenode"
+            "hadoop-hdfs-namenode",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-namenode"
@@ -90,10 +95,23 @@
             "hadoop-hdfs-namenode"
           ]
         },
+        "ROUTER": {
+          "STACK-SELECT-PACKAGE": "hadoop-hdfs-dfsrouter",
+          "INSTALL": [
+            "hadoop-hdfs-dfsrouter"
+          ],
+          "PATCH": [
+            "hadoop-hdfs-dfsrouter"
+          ],
+          "STANDARD": [
+            "hadoop-hdfs-dfsrouter"
+          ]
+        },
         "JOURNALNODE": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-journalnode",
           "INSTALL": [
-            "hadoop-hdfs-journalnode"
+            "hadoop-hdfs-journalnode",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-journalnode"
@@ -105,7 +123,8 @@
         "SECONDARY_NAMENODE": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-secondarynamenode",
           "INSTALL": [
-            "hadoop-hdfs-secondarynamenode"
+            "hadoop-hdfs-secondarynamenode",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-secondarynamenode"
@@ -117,7 +136,8 @@
         "ZKFC": {
           "STACK-SELECT-PACKAGE": "hadoop-hdfs-zkfc",
           "INSTALL": [
-            "hadoop-hdfs-zkfc"
+            "hadoop-hdfs-zkfc",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-hdfs-zkfc"
@@ -131,7 +151,8 @@
         "HIVE_METASTORE": {
           "STACK-SELECT-PACKAGE": "hive-metastore",
           "INSTALL": [
-            "hive-metastore"
+            "hive-metastore",
+            "hive-client"
           ],
           "PATCH": [
             "hive-metastore"
@@ -143,25 +164,14 @@
         "HIVE_SERVER": {
           "STACK-SELECT-PACKAGE": "hive-server2",
           "INSTALL": [
-            "hive-server2"
+            "hive-server2",
+            "hive-client"
           ],
           "PATCH": [
             "hive-server2"
           ],
           "STANDARD": [
             "hive-server2"
-          ]
-        },
-        "HIVE_SERVER_INTERACTIVE": {
-          "STACK-SELECT-PACKAGE": "hive-server2-hive",
-          "INSTALL": [
-            "hive-server2-hive"
-          ],
-          "PATCH": [
-            "hive-server2-hive"
-          ],
-          "STANDARD": [
-            "hive-server2-hive"
           ]
         },
         "HIVE_CLIENT": {
@@ -174,6 +184,32 @@
           ],
           "STANDARD": [
             "hadoop-client"
+          ]
+        },
+        "WEBHCAT_SERVER": {
+          "STACK-SELECT-PACKAGE": "hive-webhcat",
+          "INSTALL": [
+            "hive-webhcat",
+            "hive-client"
+          ],
+          "PATCH": [
+            "hive-webhcat"
+          ],
+          "STANDARD": [
+            "hive-webhcat"
+          ]
+        },
+        "HCAT": {
+          "STACK-SELECT-PACKAGE": "hive-webhcat",
+          "INSTALL": [
+            "hive-webhcat",
+            "hive-client"
+          ],
+          "PATCH": [
+            "hive-webhcat"
+          ],
+          "STANDARD": [
+            "hive-webhcat"
           ]
         }
       },
@@ -209,7 +245,8 @@
         "HISTORYSERVER": {
           "STACK-SELECT-PACKAGE": "hadoop-mapreduce-historyserver",
           "INSTALL": [
-            "hadoop-mapreduce-historyserver"
+            "hadoop-mapreduce-historyserver",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-mapreduce-historyserver"
@@ -221,7 +258,8 @@
         "MAPREDUCE2_CLIENT": {
           "STACK-SELECT-PACKAGE": "hadoop-mapreduce-client",
           "INSTALL": [
-            "hadoop-mapreduce-client"
+            "hadoop-mapreduce-client",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-mapreduce-client"
@@ -231,32 +269,96 @@
           ]
         }
       },
-      "OOZIE": {
-        "OOZIE_CLIENT": {
-          "STACK-SELECT-PACKAGE": "oozie-client",
+      "SPARK": {
+        "SPARK_CLIENT": {
+          "STACK-SELECT-PACKAGE": "spark-client",
           "INSTALL": [
-            "oozie-client"
+            "spark-client"
           ],
           "PATCH": [
-            "oozie-client"
+            "spark-client"
           ],
           "STANDARD": [
-            "oozie-client"
+            "spark-client"
           ]
         },
-        "OOZIE_SERVER": {
-          "STACK-SELECT-PACKAGE": "oozie-server",
+        "SPARK_JOBHISTORYSERVER": {
+          "STACK-SELECT-PACKAGE": "spark-historyserver",
           "INSTALL": [
-            "oozie-client",
-            "oozie-server"
+            "spark-historyserver",
+            "spark-client"
           ],
           "PATCH": [
-            "oozie-server",
-            "oozie-client"
+            "spark-historyserver"
           ],
           "STANDARD": [
-            "oozie-client",
-            "oozie-server"
+            "spark-historyserver"
+          ]
+        },
+        "SPARK_THRIFTSERVER": {
+          "STACK-SELECT-PACKAGE": "spark-thriftserver",
+          "INSTALL": [
+            "spark-thriftserver",
+            "spark-client"
+          ],
+          "PATCH": [
+            "spark-thriftserver"
+          ],
+          "STANDARD": [
+            "spark-thriftserver"
+          ]
+        }
+      },
+      "LIVY": {
+        "LIVY_CLIENT": {
+          "STACK-SELECT-PACKAGE": "livy-client",
+          "INSTALL": [
+            "livy-client"
+          ],
+          "PATCH": [
+            "livy-client"
+          ],
+          "STANDARD": [
+            "livy-client"
+          ]
+        },
+        "LIVY_SERVER": {
+          "STACK-SELECT-PACKAGE": "livy-server",
+          "INSTALL": [
+            "livy-server"
+          ],
+          "PATCH": [
+            "livy-server"
+          ],
+          "STANDARD": [
+            "livy-server"
+          ]
+        }
+      },
+      "FLINK": {
+        "FLINK_CLIENT": {
+          "STACK-SELECT-PACKAGE": "flink-client",
+          "INSTALL": [
+            "flink-client"
+          ],
+          "PATCH": [
+            "flink-client"
+          ],
+          "STANDARD": [
+            "flink-client"
+          ]
+        },
+        "FLINK_HISTORYSERVER": {
+          "STACK-SELECT-PACKAGE": "flink-historyserver",
+          "INSTALL": [
+            "flink-historyserver",
+            "flink-client"
+          ],
+          "PATCH": [
+            "flink-historyserver"
+          ],
+          "STANDARD": [
+            "flink-historyserver"
           ]
         }
       },
@@ -312,41 +414,17 @@
           ]
         }
       },
-      "SPARK3": {
-        "SPARK_CLIENT": {
-          "STACK-SELECT-PACKAGE": "spark-client",
+      "SOLR": {
+        "SOLR_SERVER": {
+          "STACK-SELECT-PACKAGE": "solr-server",
           "INSTALL": [
-            "spark-client"
+            "solr-server"
           ],
           "PATCH": [
-            "spark-client"
+            "solr-server"
           ],
           "STANDARD": [
-            "spark-client"
-          ]
-        },
-        "SPARK_JOBHISTORYSERVER": {
-          "STACK-SELECT-PACKAGE": "spark-historyserver",
-          "INSTALL": [
-            "spark-historyserver"
-          ],
-          "PATCH": [
-            "spark-historyserver"
-          ],
-          "STANDARD": [
-            "spark-historyserver"
-          ]
-        },
-        "SPARK_THRIFTSERVER": {
-          "STACK-SELECT-PACKAGE": "spark-thriftserver",
-          "INSTALL": [
-            "spark-thriftserver"
-          ],
-          "PATCH": [
-            "spark-thriftserver"
-          ],
-          "STANDARD": [
-            "spark-thriftserver"
+            "solr-server"
           ]
         }
       },
@@ -392,7 +470,8 @@
         "NODEMANAGER": {
           "STACK-SELECT-PACKAGE": "hadoop-yarn-nodemanager",
           "INSTALL": [
-            "hadoop-yarn-nodemanager"
+            "hadoop-yarn-nodemanager",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-yarn-nodemanager"
@@ -404,7 +483,8 @@
         "RESOURCEMANAGER": {
           "STACK-SELECT-PACKAGE": "hadoop-yarn-resourcemanager",
           "INSTALL": [
-            "hadoop-yarn-resourcemanager"
+            "hadoop-yarn-resourcemanager",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-yarn-resourcemanager"
@@ -416,7 +496,8 @@
         "YARN_CLIENT": {
           "STACK-SELECT-PACKAGE": "hadoop-yarn-client",
           "INSTALL": [
-            "hadoop-yarn-client"
+            "hadoop-yarn-client",
+            "hadoop-client"
           ],
           "PATCH": [
             "hadoop-yarn-client"
@@ -439,7 +520,7 @@
         }
       },
       "ZEPPELIN": {
-        "ZEPPELIN_MASTER": {
+        "ZEPPELIN_SERVER": {
           "STACK-SELECT-PACKAGE": "zeppelin-server",
           "INSTALL": [
             "zeppelin-server"
@@ -483,43 +564,43 @@
       "hadoop": [
         {
           "conf_dir": "/etc/hadoop/conf",
-          "current_dir": "{0}/current/hadoop-client/conf"
+          "current_dir": "{0}/current/hadoop-client/conf",
+          "component": "hadoop-client"
         }
       ],
       "hbase": [
         {
           "conf_dir": "/etc/hbase/conf",
-          "current_dir": "{0}/current/hbase-client/conf"
+          "current_dir": "{0}/current/hbase-client/conf",
+          "component": "hbase-client"
         }
       ],
       "hive": [
         {
           "conf_dir": "/etc/hive/conf",
-          "current_dir": "{0}/current/hive-client/conf"
-        }
-      ],
-      "hive2": [
-        {
-          "conf_dir": "/etc/hive2/conf",
-          "current_dir": "{0}/current/hive-server2-hive/conf"
+          "current_dir": "{0}/current/hive-client/conf",
+          "component": "hive-client"
         }
       ],
       "hive-hcatalog": [
         {
           "conf_dir": "/etc/hive-webhcat/conf",
           "prefix": "/etc/hive-webhcat",
-          "current_dir": "{0}/current/hive-webhcat/etc/webhcat"
+          "current_dir": "{0}/current/hive-webhcat/etc/webhcat",
+          "component": "hive-webhcat"
         },
         {
           "conf_dir": "/etc/hive-hcatalog/conf",
           "prefix": "/etc/hive-hcatalog",
-          "current_dir": "{0}/current/hive-webhcat/etc/hcatalog"
+          "current_dir": "{0}/current/hive-webhcat/etc/hcatalog",
+          "component": "hive-webhcat"
         }
       ],
       "kafka": [
         {
           "conf_dir": "/etc/kafka/conf",
-          "current_dir": "{0}/current/kafka-broker/conf"
+          "current_dir": "{0}/current/kafka-broker/conf",
+          "component": "kafka-broker"
         }
       ],
       "knox": [
@@ -537,7 +618,8 @@
       "phoenix": [
         {
           "conf_dir": "/etc/phoenix/conf",
-          "current_dir": "{0}/current/phoenix-client/conf"
+          "current_dir": "{0}/current/phoenix-client/conf",
+          "component": "phoenix-client"
         }
       ],
       "ranger-admin": [
@@ -567,37 +649,60 @@
       "spark": [
         {
           "conf_dir": "/etc/spark/conf",
-          "current_dir": "{0}/current/spark-client/conf"
+          "current_dir": "{0}/current/spark-client/conf",
+          "component": "spark-client"
+        }
+      ],
+      "flink": [
+        {
+          "conf_dir": "/etc/flink/conf",
+          "current_dir": "{0}/current/flink-client/conf",
+          "component": "flink-client"
+        }
+      ],
+      "solr": [
+        {
+          "conf_dir": "/etc/solr/conf",
+          "current_dir": "{0}/current/solr-server/conf",
+          "component": "solr-server"
         }
       ],
       "tez": [
         {
           "conf_dir": "/etc/tez/conf",
-          "current_dir": "{0}/current/tez-client/conf"
+          "current_dir": "{0}/current/tez-client/conf",
+          "component": "tez-client"
         }
       ],
       "zeppelin": [
         {
           "conf_dir": "/etc/zeppelin/conf",
-          "current_dir": "{0}/current/zeppelin-server/conf"
+          "current_dir": "{0}/current/zeppelin-server/conf",
+          "component": "zeppelin-server"
         }
       ],
       "zookeeper": [
         {
           "conf_dir": "/etc/zookeeper/conf",
-          "current_dir": "{0}/current/zookeeper-client/conf"
+          "current_dir": "{0}/current/zookeeper-client/conf",
+          "component": "zookeeper-client"
         }
       ]
     },
     "conf-select-patching": {
       "HBASE": {
-        "packages": ["hbase"]
+        "packages": [
+          "hbase"
+        ]
       },
       "HDFS": {
         "packages": []
       },
       "HIVE": {
-        "packages": ["hive", "hive-hcatalog", "hive2", "tez_hive2"]
+        "packages": [
+          "hive",
+          "hive-hcatalog"
+        ]
       },
       "KAFKA": {
         "packages": ["kafka"]
@@ -608,12 +713,6 @@
       "MAPREDUCE2": {
         "packages": []
       },
-      "OOZIE": {
-        "packages": ["oozie"]
-      },
-      "R4ML": {
-        "packages": []
-      },
       "RANGER": {
         "packages": ["ranger-admin", "ranger-usersync", "ranger-tagsync"]
       },
@@ -621,26 +720,50 @@
         "packages": ["ranger-kms"]
       },
       "SPARK": {
-        "packages": ["spark"]
+        "packages": [
+          "spark"
+        ]
+      },
+      "FLINK": {
+        "packages": [
+          "flink"
+        ]
+      },
+      "SOLR": {
+        "packages": [
+          "solr"
+        ]
       },
       "TEZ": {
-        "packages": ["tez"]
+        "packages": [
+          "tez"
+        ]
       },
       "YARN": {
         "packages": []
       },
       "ZEPPELIN": {
-        "packages": ["zeppelin"]
+        "packages": [
+          "zeppelin"
+        ]
       },
       "ZOOKEEPER": {
-        "packages": ["zookeeper"]
+        "packages": [
+          "zookeeper"
+        ]
       }
     },
-    "upgrade-dependencies" : {
-      "HIVE": ["TEZ", "MAPREDUCE2", "SQOOP"],
-      "TEZ": ["HIVE"],
-      "MAPREDUCE2": ["HIVE"],
-      "OOZIE": ["MAPREDUCE2"]
+    "upgrade-dependencies": {
+      "HIVE": [
+        "TEZ",
+        "MAPREDUCE2"
+      ],
+      "TEZ": [
+        "HIVE"
+      ],
+      "MAPREDUCE2": [
+        "HIVE"
+      ]
     }
   }
 }

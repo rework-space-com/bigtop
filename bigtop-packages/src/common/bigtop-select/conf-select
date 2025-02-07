@@ -29,7 +29,7 @@ current = root + "/current"
 vconfroot = '/etc'
 packages = ("hadoop", "hbase", "hive", "hive-hcatalog",
             "kafka", "oozie", "spark", "tez",
-            "zookeeper", "zeppelin", "flink", "solr")
+            "zookeeper", "zeppelin", "flink", "solr", "ranger-admin", "ranger-usersync", "ranger-tagsync")
 
 def printHelp():
     print("""
